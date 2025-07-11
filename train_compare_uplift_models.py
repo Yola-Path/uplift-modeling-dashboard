@@ -4,11 +4,18 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from causalml.inference.tree import UpliftRandomForestClassifier
 from causalml.metrics import qini_score, auuc_score
+import os
 import logging
+from generate_uplift_dataset import generate_raw_user_data
 
 logging.basicConfig(level=logging.INFO)
 
 def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_path="uplift_dashboard_data.csv"):
+    if not os.path.exists(input_path):
+        logging.info("Raw data not found. Generating fresh raw user data...")
+        raw_df = generate_raw_user_data(100000)
+        raw_df.to_csv(input_path, index=False)
+
     df = pd.read_csv(input_path)
     logging.info(f"Loaded raw dataset: {df.shape}")
 
@@ -48,7 +55,6 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
     metrics = []
     for name, uplift in uplift_scores.items():
         df[f'uplift_score_{name}'] = uplift
-        # Simulate outcomes
         ctr = np.clip(base_ctr + uplift * treatment, 0.01, 0.4)
         converted = np.random.binomial(1, ctr)
         revenue = np.where(converted == 1, np.random.uniform(3.0, 6.0, size=len(df)), 0)

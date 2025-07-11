@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def render_filters(df):
-    st.sidebar.header("🔍 Filter Users")
+    st.sidebar.header("Filter Users")
     segment = st.sidebar.multiselect("User Segment", df['user_segment'].unique(), default=list(df['user_segment'].unique()))
     geo = st.sidebar.multiselect("Region", df['geo'].unique(), default=list(df['geo'].unique()))
     device = st.sidebar.multiselect("Device Type", df['device_type'].unique(), default=list(df['device_type'].unique()))
