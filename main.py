@@ -10,9 +10,10 @@ st.title("Uplift Modeling and ROI Analysis Dashboard")
 
 logging.basicConfig(level=logging.INFO)
 
-# @st.cache_data
+@st.cache_data
 def load_data():
-    train_and_simulate_all_models()
+    if not os.path.exists("uplift_dashboard_data.csv") or not os.path.exists("uplift_model_metrics.csv"):
+        train_and_simulate_all_models()
     df = pd.read_csv("uplift_dashboard_data.csv")
     metric_df = pd.read_csv("uplift_model_metrics.csv")
     return df, metric_df

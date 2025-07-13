@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def generate_raw_user_data(output_path="uplift_dashboard_raw.csv", seed=42, n=100_000):
+def generate_raw_user_data(output_path="uplift_dashboard_raw.csv", seed=42, n=100000):
     np.random.seed(seed)
 
     segments = ['Dormant User', 'Returning User', 'Power User']
@@ -37,8 +37,6 @@ def generate_raw_user_data(output_path="uplift_dashboard_raw.csv", seed=42, n=10
         'predicted_ctr': base_ctr
     })
 
-    df.to_csv(output_path, index=False)
-    print(f"Raw user dataset saved to {output_path}")
     return df
 
 if __name__ == "__main__":

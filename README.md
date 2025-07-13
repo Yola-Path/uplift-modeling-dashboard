@@ -22,7 +22,7 @@ To regenerate the data:
 python generate_uplift_dataset.py
 ```
 
-### ▶Run the Dashboard
+### Run the Dashboard
 ```bash
 streamlit run main.py
 ```
