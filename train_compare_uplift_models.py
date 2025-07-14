@@ -48,8 +48,14 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
     uplift_scores['s_learner'] = s_clf.predict_proba(treat_1)[:, 1] - s_clf.predict_proba(treat_0)[:, 1]
 
     # 3. CausalML Forest
-    causal_model = UpliftRandomForestClassifier(control_name=0, n_estimators=100, random_state=42)
-    causal_model.fit(X=X, treatment=treatment, y=y_sim)
+    treatment_str = df['treatment'].astype(str)
+    causal_model = UpliftRandomForestClassifier(
+        control_name='0',
+        n_estimators=100,
+        random_state=42
+    )
+
+    causal_model.fit(X=X, treatment=treatment_str, y=y_sim)
     uplift_scores['causalml'] = causal_model.predict(X)
 
     metrics = []
