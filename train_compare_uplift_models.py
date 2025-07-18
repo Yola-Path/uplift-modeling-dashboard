@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from causalml.inference.tree import UpliftRandomForestClassifier
-from causalml.metrics import qini_score, auuc_score
+from causalml import metrics
 import os
 import logging
 from generate_uplift_dataset import generate_raw_user_data
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_path="uplift_dashboard_data.csv"):
     if not os.path.exists(input_path):
         logging.info("Raw data not found. Generating fresh raw user data...")
-        raw_df = generate_raw_user_data(100000)
+        raw_df = generate_raw_user_data(10000)
         raw_df.to_csv(input_path, index=False)
 
     df = pd.read_csv(input_path)
@@ -73,8 +73,8 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
         df[f'promo_cost_{name}'] = promo
         df[f'roi_{name}'] = roi
 
-        score_qini = qini_score(y_true=converted, treatment=treatment, uplift=uplift)
-        score_auuc = auuc_score(y_true=converted, treatment=treatment, uplift=uplift)
+        score_qini = metrics.qini_score(y_true=converted, treatment=treatment, uplift=uplift)
+        score_auuc = metrics.auuc_score(y_true=converted, treatment=treatment, uplift=uplift
         metrics.append({'model': name, 'qini': score_qini, 'auuc': score_auuc})
 
     metrics_df = pd.DataFrame(metrics)
