@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def generate_raw_user_data(output_path="uplift_dashboard_raw.csv", seed=42, n=10000):
+def generate_raw_user_data(output_path="uplift_dashboard_raw.csv", seed=42, n=5000):
     np.random.seed(seed)
 
     segments = ['Dormant User', 'Returning User', 'Power User']
