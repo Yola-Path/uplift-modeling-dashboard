@@ -73,8 +73,23 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
         df[f'promo_cost_{name}'] = promo
         df[f'roi_{name}'] = roi
 
-        score_qini = qini_score(y_true=converted, treatment=treatment, uplift=uplift)
-        score_auuc = auuc_score(y_true=converted, treatment=treatment, uplift=uplift)
+        df_score = pd.DataFrame({
+            "converted": converted,
+            "treatment": treatment,
+            "uplift": uplift
+        })
+        score_qini = qini_score(
+            df_score,
+            outcome_col="converted",
+            treatment_col="treatment",
+            uplift_col="uplift"
+        )
+        score_auuc = auuc_score(
+            df_score,
+            outcome_col="converted",
+            treatment_col="treatment",
+            uplift_col="uplift"
+        )
         metrics.append({'model': name, 'qini': score_qini, 'auuc': score_auuc})
 
     metrics_df = pd.DataFrame(metrics)
