@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from causalml.inference.tree import UpliftRandomForestClassifier
-from causalml.metrics import cm_metrics
+import causalml.metrics as cm_metrics
 import os
 import logging
 from generate_uplift_dataset import generate_raw_user_data
