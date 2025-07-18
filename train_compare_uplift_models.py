@@ -14,7 +14,7 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
     # Step 1: Load or generate raw data
     if not os.path.exists(input_path):
         logging.info("Raw data not found. Generating fresh raw user data...")
-        raw_df = generate_raw_user_data(5000)
+        raw_df = generate_raw_user_data(1000)
         raw_df.to_csv(input_path, index=False)
 
     df = pd.read_csv(input_path)
@@ -58,11 +58,11 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
     # Step 2: Simulate metrics and outcomes
     for name, uplift in uplift_scores.items():
         df[f'uplift_score_{name}'] = uplift
-        ctr = np.clip(base_ctr + uplift * treatment, 0.01, 0.4)
-        converted = np.random.binomial(1, ctr)
-        revenue = np.where(converted == 1, np.random.uniform(3.0, 6.0, size=len(df)), 0)
-        promo = np.where(treatment == 1, np.random.uniform(0.5, 2.0, size=len(df)), 0)
-        roi = revenue - promo
+        ctr = np.clip(base_ctr + uplift * treatment, 0.01, 0.4).flatten()        converted = np.random.binomial(1, ctr)
+        converted = np.random.binomial(1, ctr).flatten()
+        revenue = np.where(converted == 1, np.random.uniform(3.0, 6.0, size=len(df)), 0).flatten()
+        promo = np.where(treatment == 1, np.random.uniform(0.5, 2.0, size=len(df)), 0).flatten()
+        roi = (revenue - promo).flatten()
 
         df[f'actual_ctr_{name}'] = ctr
         df[f'converted_{name}'] = converted
