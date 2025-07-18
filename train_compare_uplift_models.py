@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from causalml.inference.tree import UpliftRandomForestClassifier
-from causalml import metrics
+from causalml.metrics import cm_metrics
 import os
 import logging
 from generate_uplift_dataset import generate_raw_user_data
@@ -73,8 +73,8 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
         df[f'promo_cost_{name}'] = promo
         df[f'roi_{name}'] = roi
 
-        score_qini = metrics.qini_score(y_true=converted, treatment=treatment, uplift=uplift)
-        score_auuc = metrics.auuc_score(y_true=converted, treatment=treatment, uplift=uplift)
+        score_qini = cm_metrics.qini_score(y_true=converted, treatment=treatment, uplift=uplift)
+        score_auuc = cm_metrics.auuc_score(y_true=converted, treatment=treatment, uplift=uplift)
         metrics.append({'model': name, 'qini': score_qini, 'auuc': score_auuc})
 
     metrics_df = pd.DataFrame(metrics)
