@@ -49,29 +49,26 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
 
     # 3. CausalML Forest
     treatment_str = df['treatment'].astype(str)
-    causal_model = UpliftRandomForestClassifier(
-        control_name='0',
-        n_estimators=100,
-        random_state=42
-    )
-
+    causal_model = UpliftRandomForestClassifier(control_name='0', n_estimators=100, random_state=42)
     causal_model.fit(X=X, treatment=treatment_str, y=y_sim)
     uplift_scores['causalml'] = causal_model.predict(X)
 
     metrics = []
+    df_out = df.copy()
+
     for name, uplift in uplift_scores.items():
-        df[f'uplift_score_{name}'] = uplift
+        df_out[f'uplift_score_{name}'] = uplift
         ctr = np.clip(base_ctr + uplift * treatment, 0.01, 0.4)
         converted = np.random.binomial(1, ctr)
         revenue = np.where(converted == 1, np.random.uniform(3.0, 6.0, size=len(df)), 0)
         promo = np.where(treatment == 1, np.random.uniform(0.5, 2.0, size=len(df)), 0)
         roi = revenue - promo
 
-        df[f'actual_ctr_{name}'] = ctr
-        df[f'converted_{name}'] = converted
-        df[f'conversion_revenue_{name}'] = revenue
-        df[f'promo_cost_{name}'] = promo
-        df[f'roi_{name}'] = roi
+        df_out[f'actual_ctr_{name}'] = ctr
+        df_out[f'converted_{name}'] = converted
+        df_out[f'conversion_revenue_{name}'] = revenue
+        df_out[f'promo_cost_{name}'] = promo
+        df_out[f'roi_{name}'] = roi
 
         df_score = pd.DataFrame({
             "converted": converted,
@@ -94,14 +91,15 @@ def train_and_simulate_all_models(input_path="uplift_dashboard_raw.csv", output_
 
     metrics_df = pd.DataFrame(metrics)
     best_model = metrics_df.sort_values(by='qini', ascending=False).iloc[0]['model']
-    df['best_model'] = best_model
+    df_out['best_model'] = best_model
+
     metrics_df.to_csv("uplift_model_metrics.csv", index=False)
     logging.info("Model comparison results saved.")
     logging.info(metrics_df)
 
-    df.to_csv(output_path, index=False)
+    df_out.to_csv(output_path, index=False)
     logging.info(f"Final dataset with multi-model simulation saved to {output_path}")
-    return df
+    return df_out
 
 if __name__ == "__main__":
     train_and_simulate_all_models()
